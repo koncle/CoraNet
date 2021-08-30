@@ -136,15 +136,12 @@ if __name__ == '__main__':
 
     os.environ['CUDA_VISIBLE_DEVICES'] = '1'
     num_classes = 2
-    res_dir = './result/pancreas_final_VNet/con_5.0_consistency_1_st5_best2'
-    # res_dir = './result/pancreas_final_resnet18_dropout_0.5/con_5.0_consistency_1_st20_all2'
+    res_dir = './result/pancreas_3d_VNet/st_model'
+
     split_name = 'pancreas'
     data_root = '/data/DataSets/pancreas_pad25'
     net, ema_net, optimizer, lab_loader, unlab_loader, test_loader = get_model_and_dataloader()
     dataset = Pancreas(data_root, split_name, split='test')
     load_net_opt(net, optimizer, res_dir + '/best.pth')
-    # load_net_opt(net, optimizer, res_dir + 'con_5_consistency_1_best/190.pth')
-    # test(net, test_loader)
-
     metric = test_calculate_metric(net, dataset)
     print(metric)
