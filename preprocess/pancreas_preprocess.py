@@ -125,7 +125,7 @@ def process_case(case_folders):
 def generate_h5_data(original_pancreas_path, save_path):
     global root, save_to
     root = Path(original_pancreas_path)
-    path = Path(root) / 'data'  # 'Pancreas-CT'
+    path = Path(root) / 'Pancreas-CT'
     save_to = save_path
     paths = list(path.iterdir())
     paths.sort()
@@ -136,6 +136,5 @@ def generate_h5_data(original_pancreas_path, save_path):
 
 
 if __name__ == '__main__':
-    data_root = '/data/DataSets/pancreas_pad25/'
-    generate_h5_data('/data/DataSets/Pancreas-CT/', data_root)
-    # split_file_path(data_root, '../data_lists/pancreas_6', train_lab_num=6, train_unlab_num=56, test_num=None, shuffle=False)
+    path_to_save_generated_data = 'data'
+    generate_h5_data('pancreas', path_to_save_generated_data)

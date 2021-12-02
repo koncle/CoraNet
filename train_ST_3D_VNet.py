@@ -26,22 +26,22 @@ res_dir = 'result/pancreas_final_VNet/'
 logging.basicConfig(filename=res_dir + "log.txt", level=logging.INFO,
                     format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
-logging.info('\n\n New Exp :')
+logging.info('New Exp :')
 
 # 2, 1
-os.environ['CUDA_VISIBLE_DEVICES'] = '4,5,6,7'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
 # Parameters
 num_class = 2
 base_dim = 8
 
 batch_size = 8
-lr = 1e-2
+lr = 1e-3
 beta1, beta2 = 0.5, 0.999
 w_con = torch.FloatTensor([1, 5])
 w_rad = torch.FloatTensor([5, 1])
 
 # log settings & test
-pretraining_epochs = 30
+pretraining_epochs = 60
 self_training_epochs = 201
 thres = 0.5
 
@@ -50,13 +50,12 @@ st_save_step = 20
 pred_step = 10
 
 r18 = False
-res_dir = 'result/pancreas_final_VNet/'
 split_name = 'pancreas'
 data_root = '/data/DataSets/pancreas_pad25'
 cost_num = 3
 
 alpha = 0.99
-consistency = 0.1
+consistency = 1
 consistency_rampup = 40
 
 
@@ -126,7 +125,6 @@ def get_model_and_dataloader():
 
     testset = Pancreas(data_root, split_name, split='test')
     test_loader = DataLoader(testset, batch_size=1, shuffle=False, num_workers=0)
-    logging.info(len(lab_loader.dataset), len(unlab_loader.dataset), len(test_loader.dataset))
     return net, ema_net, optimizer, lab_loader, unlab_loader, test_loader
 
 
@@ -149,7 +147,7 @@ def load_net_opt(net, optimizer, path):
 def pretrain(net, ema_net, optimizer, lab_loader, unlab_loader, test_loader, start_epoch=1):
     save_path = Path(res_dir) / 'pretrain_con_{}'.format(w_con[1].item(), consistency)
     save_path.mkdir(exist_ok=True)
-    logging.info("Save path : ", save_path)
+    logging.info("Save path : " + str(save_path))
 
     writer = SummaryWriter(str(save_path), filename_suffix=time.strftime('_%Y-%m-%d_%H-%M-%S'))
 
