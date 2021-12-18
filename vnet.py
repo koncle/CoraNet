@@ -8,7 +8,7 @@ class ConvBlock(nn.Module):
 
         ops = []
         for i in range(n_stages):
-            if i==0:
+            if i == 0:
                 input_channel = n_filters_in
             else:
                 input_channel = n_filters_out
@@ -52,7 +52,7 @@ class ResidualConvBlock(nn.Module):
             elif normalization != 'none':
                 assert False
 
-            if i != n_stages-1:
+            if i != n_stages - 1:
                 ops.append(nn.ReLU(inplace=True))
 
         self.conv = nn.Sequential(*ops)
@@ -124,7 +124,7 @@ class Upsampling(nn.Module):
         super(Upsampling, self).__init__()
 
         ops = []
-        ops.append(nn.Upsample(scale_factor=stride, mode='trilinear',align_corners=False))
+        ops.append(nn.Upsample(scale_factor=stride, mode='trilinear', align_corners=False))
         ops.append(nn.Conv3d(n_filters_in, n_filters_out, kernel_size=3, padding=1))
         if normalization == 'batchnorm':
             ops.append(nn.BatchNorm3d(n_filters_out))

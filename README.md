@@ -15,7 +15,6 @@ pancreas
 └── Pancreas-CT-Label
 ```
 
-
 And do the preprocessing with ``preprocess/pancreas_preprocess.py`` for CT-Pancreas dataset.
 
 ## Pretrained Model

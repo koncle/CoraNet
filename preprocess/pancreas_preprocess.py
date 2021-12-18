@@ -8,40 +8,6 @@ import numpy as np
 from utils1.visualize import show_graphs
 
 
-def split_file_path(root, data_list_path, train_lab_num, train_unlab_num, test_num, shuffle=False):
-    Path(data_list_path).mkdir(exist_ok=True)
-
-    def save_path(paths, filename):
-        with open(filename, 'w') as f:
-            for p in paths:
-                f.write(p + '\n')
-        return filename
-
-    root, data_list_path = Path(root), Path(data_list_path)
-    files = []
-    for f in root.iterdir():
-        files.append(f.name)
-
-    files.sort(key=lambda x: int(x.split('.')[0]))
-
-    if test_num is not None:
-        assert len(files) == (train_lab_num + train_unlab_num + test_num), 'Total_files : {}, current files : {}'.format(
-            len(files), train_lab_num + train_unlab_num + test_num)
-    else:
-        test_num = len(files) - (train_lab_num + train_unlab_num)
-
-    if shuffle:
-        np.random.shuffle(files)
-
-    train_lab_paths = files[:train_lab_num]
-    train_unlab_paths = files[train_lab_num:train_lab_num + train_unlab_num]
-    test_paths = files[-test_num:]
-    print('Generated labeled train {}, unlabeled train {}, test {}'.format(len(train_lab_paths), len(train_unlab_paths), len(test_paths)))
-    return save_path(train_lab_paths, data_list_path / 'train_lab.txt'), \
-           save_path(train_unlab_paths, data_list_path / 'train_unlab.txt'), \
-           save_path(test_paths, data_list_path / 'test.txt')
-
-
 def normalize(data):
     # normalized_data = (data - data.mean()) / (data.std() + 1e-10)
     normalized_data = (data - data.min()) / (data.max() - data.min())

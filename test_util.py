@@ -34,8 +34,6 @@ def test_all_case(net, image_list, num_classes, patch_size=(112, 112, 80), strid
             nib.save(nib.Nifti1Image(image[:].astype(np.float32), np.eye(4)), test_save_path + id + "_img.nii.gz")
             nib.save(nib.Nifti1Image(label[:].astype(np.float32), np.eye(4)), test_save_path + id + "_gt.nii.gz")
     avg_metric = total_metric / len(image_list)
-    print('average metric is {}'.format(avg_metric))
-
     return avg_metric
 
 
@@ -121,6 +119,7 @@ def calculate_metric_percase(pred, gt):
     return dice, jc, hd, asd
 
 
+@torch.no_grad()
 def test_calculate_metric(net, test_dataset, num_classes=2):
     net.eval()
     image_list = test_dataset.image_list

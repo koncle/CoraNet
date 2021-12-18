@@ -482,23 +482,3 @@ def bar_plot(data, x_aixs_names=None, bar_names=None, width_of_all_col=0.7, offs
     if save_name is not None:
         plt.savefig(save_name)
     plt.show()
-
-
-if __name__ == '__main__':
-    # img_p = '/data/datasets/new_kidney/train/D0013330343.jpg'
-    # mask_p = '/data/datasets/new_kidney/train/D0013330343_1.bmp'
-    # import skimage.io as skio
-    # img = skio.imread(img_p, as_gray=True)
-    # mask = skio.imread(mask_p, as_gray=True)
-    # label_overlay(img, mask)
-
-    domains = [
-        [67.70170331001282, 67.70170331001282, 67.70170331001282, 67.80700087547302, 69.30771470069885, 72.1611738204956, 74.96883273124695, 78.67265939712524, 82.45959877967834, 86.59244775772095],
-        [76.06654763221741, 76.06654763221741, 76.06654763221741, 76.12131237983704, 77.15780138969421, 78.85223627090454, 81.35511875152588, 84.28720235824585, 87.52847909927368, 90.4483437538147],
-        [76.85546875, 76.85546875, 76.85546875, 76.89301371574402, 77.84401774406433, 79.67775464057922, 82.20244646072388, 84.30439829826355, 87.43523359298706, 90.91591835021973],
-        [96.40718698501587, 96.40718698501587, 96.40718698501587, 96.40718698501587, 96.40287756919861, 96.6305673122406, 97.14632034301758, 97.72307276725769, 98.18750023841858, 98.97436499595642]
-    ]
-    bins = ['> ' + str(i/10) for i in range(0, 10)]
-    bar_plot(domains, bins, bar_names=['Sketch', 'Cartoon', 'Art', 'Photo'],
-             ylim=[50, 103], width_of_all_col=0.9, offset_between_bars=0.02, figsize=(18, 6),
-             title='Sketch', x_label='Confidence', y_label='Acc', text_size='medium')

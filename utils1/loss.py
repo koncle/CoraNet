@@ -2,43 +2,6 @@ import torch.nn as nn
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.autograd import Variable
-from torch.nn import functional as F
-
-
-def cross_entropy_2d(predict, target):
-    """
-    Args:
-        predict:(n, c, h, w)
-        target:(n, h, w)
-    """
-    assert not target.requires_grad
-    assert predict.base_dim() == 4
-    assert target.base_dim() == 4
-    assert predict.size(0) == target.size(0), f"{predict.size(0)} vs {target.size(0)}"
-    assert predict.size(2) == target.size(2), f"{predict.size(2)} vs {target.size(1)}"
-    assert predict.size(3) == target.size(3), f"{predict.size(3)} vs {target.size(3)}"
-    n, c, h, w = predict.size()
-    target_mask = (target >= 0) * (target != 255)
-    target = target[target_mask]
-    if not target.data.base_dim():
-        return Variable(torch.zeros(1))
-    predict = predict.transpose(1, 2).transpose(2, 3).contiguous()
-    predict = predict[target_mask.view(n, h, w, 1).repeat(1, 1, 1, c)].view(-1, c)
-
-    loss = F.cross_entropy(predict, target, size_average=True)
-    return loss
-
-
-def entropy_loss(v):
-    """
-        Entropy loss for probabilistic prediction vectors
-        input: batch_size x channels x h x w
-        output: batch_size x 1 x h x w
-    """
-    assert v.base_dim() == 4
-    n, c, h, w = v.size()
-    return -torch.sum(torch.mul(v, torch.log2(v + 1e-30))) / (n * h * w * np.log2(c))
 
 
 def to_one_hot(tensor, nClasses):
@@ -103,8 +66,8 @@ class DiceLoss(nn.Module):
 
         if mask is not None:
             mask = mask.view(N, 1, -1)
-            inter = (inter.view(N, nclass, -1)*mask).sum(2)
-            union = (union.view(N, nclass, -1)*mask).sum(2)
+            inter = (inter.view(N, nclass, -1) * mask).sum(2)
+            union = (union.view(N, nclass, -1) * mask).sum(2)
         else:
             # N x C
             inter = inter.view(N, nclass, -1).sum(2)
@@ -135,8 +98,8 @@ class DiceLoss(nn.Module):
 
         if mask is not None:
             mask = mask.view(N, 1, -1)
-            inter = (inter.view(N, nclass, -1)*mask).sum(2)
-            union = (union.view(N, nclass, -1)*mask).sum(2)
+            inter = (inter.view(N, nclass, -1) * mask).sum(2)
+            union = (union.view(N, nclass, -1) * mask).sum(2)
         else:
             # N x C
             inter = inter.view(N, nclass, -1).sum(2)
@@ -160,5 +123,5 @@ def softmax_mse_loss(input_logits, target_logits):
     input_softmax = F.softmax(input_logits, dim=1)
     target_softmax = F.softmax(target_logits, dim=1)
 
-    mse_loss = (input_softmax-target_softmax)**2
+    mse_loss = (input_softmax - target_softmax) ** 2
     return mse_loss

@@ -6,6 +6,7 @@ import torch.nn.functional as F
 
 NORM = functools.partial(nn.InstanceNorm3d, affine=True)
 
+
 def conv3x3x3(in_planes, out_planes, stride=1):
     "3x3 convolution with padding"
     return nn.Conv3d(
@@ -262,7 +263,7 @@ class Pseudo3DLayer(nn.Module):
         new_features = self.conv4(x)
 
         self.drop_rate = 0  # Dropout will make trouble!
-                            # since we use the train mode for inference
+        # since we use the train mode for inference
         if self.drop_rate > 0:
             new_features = F.dropout(
                 new_features, p=self.drop_rate, training=self.training)
