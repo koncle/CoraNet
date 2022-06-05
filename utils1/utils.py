@@ -121,7 +121,8 @@ def save_net_opt(net, optimizer, path, epoch):
 
 def load_net_opt(net, optimizer, path):
     state = torch.load(str(path))
-    net.load_state_dict(state['net'])
+    ret = net.load_state_dict(state['net'])
+    print(ret)
     optimizer.load_state_dict(state['opt'])
 
 
@@ -202,7 +203,7 @@ class PretrainMeasures(Measures):
 
     def update(self, out, lab, *args):
         args = list(args)
-        masks = get_mask(out[0])
+        masks = get_mask(out)
         train_dice = statistic.dice_ratio(masks, lab)
         args.append(train_dice)
 

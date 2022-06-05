@@ -1,13 +1,13 @@
 import os
 
 import torch
+from torch.backends import cudnn
 from tqdm import tqdm
 from preprocess.io_ import mkdir
 from utils1.loss import DiceLoss, softmax_mse_loss
 from utils1.utils import *
 from test_util import test_calculate_metric
 from utils1.visualize import show_graphs
-
 
 """Global Variables"""
 os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
@@ -59,8 +59,8 @@ def pretrain(net, optimizer, lab_loader, test_loader):
             logger.info('average metric is {}'.format(avg_metric))
             val_dice = avg_metric[0]
 
+            save_net_opt(net, optimizer, save_path / 'best.pth', epoch)
             if val_dice > max_dice:
-                save_net_opt(net, optimizer, save_path / 'best.pth', epoch)
                 max_dice = val_dice
 
             writer.add_scalar('pretrain/test_dice', val_dice, epoch)
@@ -83,7 +83,7 @@ def pretrain(net, optimizer, lab_loader, test_loader):
             loss.backward()
             optimizer.step()
 
-            measures.update(out, lab, ce_loss, dice_loss, loss_con, loss_rad, loss)
+            measures.update(out[0], lab, ce_loss, dice_loss, loss_con, loss_rad, loss)
             measures.log(epoch, epoch * len(lab_loader) + step)
         writer.flush()
 
@@ -115,15 +115,15 @@ def self_train(net, ema_net, optimizer, lab_loader, unlab_loader, test_loader):
         logger.info('')
 
         """Testing"""
-        if epoch % st_save_step == 0:
+        if epoch % st_save_step == 0 and epoch > 0:
             avg_metric = test_calculate_metric(net, test_loader.dataset)
             logger.info('average metric is {}'.format(avg_metric))
             val_dice = avg_metric[0]
             writer.add_scalar('val_dice', val_dice, epoch)
 
+            save_net_opt(net, optimizer, str(save_path / 'best.pth'), epoch)
             """Save model"""
             if val_dice > max_dice:
-                save_net_opt(net, optimizer, str(save_path / 'best.pth'), epoch)
                 max_dice = val_dice
 
             logger.info('Evaluation : val_dice: %.4f, val_maxdice: %.4f' % (val_dice, max_dice))
